@@ -10,7 +10,7 @@
 //Game values
 let min = 1,
     max = 10,
-    winningNum = 2,
+    winningNum = getRandomNum(min,max),
     guessesLeft = 3;
 
 //UI vars
@@ -25,12 +25,22 @@ const minNum = document.querySelector(".min-num"),
 minNum.textContent = min;
 maxNum.textContent = max;
 
+//Play again event listener
+//We need to use event delegation here as the play-agian classname is added to the page after the game is over hence we need to use the paren tin order to apply the event listener
+game.addEventListener("mousedown",function(e){
+
+    if(e.target.className === "play-again"){
+        window.location.reload(); //We reload the page after clicking play again
+        return false;
+    }
+});
+
 //Listen for guess
 guessBtn.addEventListener("click",function(){
     let guess = parseInt(guessInput.value);//as anything passed inside guessInput will be string we first need to parse it to number
     if(isNaN(guess) || guess < min || guess > max){
         setMessage(`Please enter a number between ${min} and ${max}`, "red");
-        return false;//ending the event listener here so that other if statements can work without interference
+        return false;//This acts like an else statement so that the other if else statements can run without interference
     }
 
     if(guess === winningNum){
@@ -58,7 +68,7 @@ guessBtn.addEventListener("click",function(){
             setMessage(`${guess} is wrong, You have ${guessesLeft} guesses left`,"red");
 
             //clear input
-            guessInput.value.clear();
+            guessInput.value = "";
             
         }
     }
@@ -69,6 +79,13 @@ guessBtn.addEventListener("click",function(){
 function setMessage(msg,color){
     message.textContent = msg;
     message.style.color = color;
+}
+
+//getRandomNum function
+function getRandomNum(min,max){
+
+    return (Math.floor((Math.random()*(max-min+1)+min))); //This was done so that any random number between the min and max can be set as a winning number and thus making the game more interesting
+
 }
 
 //gameOver function
@@ -86,5 +103,11 @@ function gameOver(won , msg){
 
     //set message
     setMessage(msg);
+
+    //Play again
+    guessBtn.value = "Play again";
+
+    //Appending a class name to the guessBtn 
+    guessBtn.className += "play-again";
 
 }
